@@ -25,17 +25,15 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
     restart: unless-stopped
 
-  # watchtower:
-  #   image: containrrr/watchtower
-  #   container_name: watchtower
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   environment:
-  #     - PGID
-  #     - PUID
-  #     - TZ
-  #   command: --schedule "0 0 6 * * *" --label-enable --cleanup
-  #   restart: unless-stopped
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TZ=America/Sao_Paulo
+    command: --schedule "0 0 6 * * *" --label-enable --cleanup
+    restart: unless-stopped
 
   ghost:
     image: ghost
@@ -54,7 +52,7 @@ services:
       traefik.frontend.rule: "Host:www.${DOMAIN}"
       traefik.port: "2368"
       # traefik.frontend.auth.basic: "${HTPASSWD}"
-      com.centurylinklabs.watchtower.enable: "true"
+      com.centurylinklabs.watchtower.enable: "false"
     restart: unless-stopped
 
   portainer:
@@ -76,3 +74,22 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
     restart: unless-stopped
 
+  gotify:
+    image: gotify/server
+    container_name: gotify
+    hostname: gotify
+    user: 1000:1000
+    environment:
+    - TZ=America/Sao_Paulo
+    ports:
+      - 3080:3080
+    volumes:
+      - ./volumes/gotify/data:/app/data
+      - ./volumes/gotify/conf:/etc/gotify
+    labels:
+      traefik.enable: "true"
+      traefik.frontend.rule: "Host:gotify.${DOMAIN}"
+      traefik.port: "3080"
+      # traefik.frontend.auth.basic: "${HTPASSWD}"
+      com.centurylinklabs.watchtower.enable: "true"
+    restart: unless-stopped
