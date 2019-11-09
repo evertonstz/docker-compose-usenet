@@ -44,7 +44,7 @@ services:
     user: 1000:1000
     environment:
     - url=https://www.libertai.me
-    - TZ = America/Sao_Paulo
+    - TZ=America/Sao_Paulo
     ports:
       - 2368:2368
     volumes:
@@ -60,11 +60,10 @@ services:
   portainer:
     image: portainer/portainer
     container_name: portainer
-    logging: *default-logging
     ports:
     - '9000:9000'
     environment:
-    - TZ = America/Sao_Paulo
+    - TZ=America/Sao_Paulo
     volumes:
     - '/var/run/docker.sock:/var/run/docker.sock'
     - '/etc/localtime:/etc/localtime:ro'
