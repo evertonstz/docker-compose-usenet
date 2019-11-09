@@ -37,47 +37,44 @@ services:
   #   command: --schedule "0 0 6 * * *" --label-enable --cleanup
   #   restart: unless-stopped
 
-  sonarr:
-    image: linuxserver/sonarr:latest
-    container_name: sonarr
-    hostname: sonarr
-    ports:
-      - "8989:8989"
-    volumes:
-      - ${CONFIG}/sonarr:/config
-      - ${DOWNLOAD}/complete:/downloads
-      - ${DATA}/tv:/tv
-      - ${DATA}/anime:/anime
-    environment:
-      - PGID
-      - PUID
-      - TZ
-    labels:
-      traefik.enable: "true"
-      traefik.port: "8989"
-      traefik.frontend.rule: "Host:sonarr.${DOMAIN}"
-      traefik.frontend.auth.basic: "${HTPASSWD}"
-      com.centurylinklabs.watchtower.enable: "true"
-    restart: unless-stopped
+#  sonarr:
+#    image: linuxserver/sonarr:latest
+#    container_name: sonarr
+#    hostname: sonarr
+#    ports:
+#      - "8989:8989"
+#    volumes:
+#      - ${CONFIG}/sonarr:/config
+#      - ${DOWNLOAD}/complete:/downloads
+#      - ${DATA}/tv:/tv
+#      - ${DATA}/anime:/anime
+#    environment:
+#      - PGID
+#      - PUID
+#      - TZ
+#    labels:
+#      traefik.enable: "true"
+#      traefik.port: "8989"
+#      traefik.frontend.rule: "Host:sonarr.${DOMAIN}"
+#      traefik.frontend.auth.basic: "${HTPASSWD}"
+#      com.centurylinklabs.watchtower.enable: "true"
+#    restart: unless-stopped
 
-  gotify:
-    image: gotify/server
-    container_name: gotify
-    hostname: gotify
-    user: 1000:1000
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    logging: *default-logging
     ports:
-      - 3080:3080
+    - '9000:9000'
     volumes:
-      - ./volumes/gotify/data:/app/data
-      - ./volumes/gotify/conf:/etc/gotify
-    environment:
-      - PGID
-      - PUID
-      - TZ
+    - '/var/run/docker.sock:/var/run/docker.sock'
+    - '/etc/localtime:/etc/localtime:ro'
+    command: ${PORTAINERSTYLE} --no-analytics -H unix:///var/run/docker.sock
     labels:
       traefik.enable: "true"
-      traefik.port: "3080"
-      traefik.frontend.rule: "Host:gotify.${DOMAIN}"
+      traefik.frontend.rule: "Host:portainer.${DOMAIN}"
+      traefik.port: "9000"
       # traefik.frontend.auth.basic: "${HTPASSWD}"
       com.centurylinklabs.watchtower.enable: "true"
     restart: unless-stopped
+
